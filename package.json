@@ -1,0 +1,20 @@
+{
+  "name": "Task_1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "local": "nodemon index.js",
+    "dev": "yarn run compile && node build/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "shx rm -rf build/ && tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongodb": "^5.7.0",
+    "mongoose": "^7.4.2",
+    "nodemon": "^3.0.1"
+  }
+}
