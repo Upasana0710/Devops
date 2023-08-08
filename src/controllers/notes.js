@@ -2,40 +2,36 @@ import Notes from '../models/notes.js';
 
 //Create notes
 export const createNotes = async (req, res) => {
-    try {
-        console.log("1");
-        const { title, description, type } = req.body; // Assuming you're sending title, description, and type in the request body
-        console.log(title, description, type)
-        // Validate the request data
-        if (!title || !description || !type) {
-            return res.status(400).json({ error: 'Please provide title, description, and type for the note.' });
-        }
-        console.log("2");
-        // Check if a note with the same title already exists
-        const existingNote = await Notes.findOne({ title });
-        console.log("3");
-        if (existingNote) {
-            return res.status(409).json({ error: 'A note with the same title already exists.' });
-        }
-
-        // Create a new note using the 'Notes' model
-        const newNote = await Notes.create({
-            title,
-            description,
-            type,
-        });
-        console.log("4");
-
-        return res.status(201).json({ message: 'Note created successfully!', note: newNote });
-    } catch (error) {
-        // Handle Mongoose validation errors
-        if (error.name === 'ValidationError') {
-            const errors = Object.values(error.errors).map((err) => err.message);
-            return res.status(400).json({ error: errors });
-        }
-
-        return res.status(500).json({ error: 'Something went wrong!' });
+  try {
+    const { title, descriptionription, type } = req.body; // Assuming you're sending title, descriptionription, and type in the request body
+    console.log(title, descriptionription, type)
+    // Validate the request data
+    if (!title || !descriptionription || !type) {
+      return res.status(400).json({ error: 'Please provide title, descriptionription, and type for the note.' });
     }
+    // Check if a note with the same title already exists
+    const existingNote = await Notes.findOne({ title });
+    if (existingNote) {
+      return res.status(409).json({ error: 'A note with the same title already exists.' });
+    }
+
+    // Create a new note using the 'Notes' model
+    const newNote = await Notes.create({
+      title,
+      descriptionription,
+      type,
+    });
+
+    return res.status(201).json({ message: 'Note created successfully!', note: newNote });
+  } catch (error) {
+    // Handle Mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ error: errors });
+    }
+
+    return res.status(500).json({ error: 'Something went wrong!' });
+  }
 };
 
 
@@ -67,52 +63,42 @@ export const getNotes = async (req, res) => {
 };
 
 //Update api
-export const updateOrAddNotes = async (req, res) => {
+export const updateNotes = async (req, res) => {
   try {
-    const { title, desc, type } = req.body;
-
+    const { title, description, type } = req.body;
+    const {id} = req.params;
     // Check if a note with the same title already exists
-    const existingNote = await Notes.findOne({ title });
-
-    if (existingNote) {
-      // Check if the provided data is the same as the existing note's data
-      if (existingNote.desc === desc && existingNote.type === type) {
-        return res.status(200).json({ message: 'No changes made. The existing note is the same.', note: existingNote });
-      }
-
-      // If the note already exists, update its 'desc' and 'type'
-      existingNote.desc = desc;
-      existingNote.type = type;
-      await existingNote.save();
-
-      return res.status(200).json({ message: 'Note updated successfully!', note: existingNote });
+    const existingNote = await Notes.findById(id);
+    if (!existingNote) res.status(404).json({ message: "Note not found!" });
+    // Check if the provided data is the same as the existing note's data
+    if (existingNote.title === title && existingNote.description === description && existingNote.type === type) {
+      return res.status(200).json({ message: 'No changes made. The existing note is the same.', note: existingNote });
     }
+    console.log(existingNote, title, description, type);
+    // If the note already exists, update its 'description' and 'type'
+    existingNote.description = description;
+    existingNote.type = type;
+    await existingNote.save();
 
-    // If the note doesn't exist, create a new note
-    const newNote = await Notes.create({ title, desc, type });
-    return res.status(201).json({ message: 'Note added successfully!', note: newNote });
+    return res.status(200).json({ message: 'Note updated successfully!', note: existingNote });
   } catch (error) {
-    return res.status(500).json({ error: 'Something went wrong!' });
+    return res.status(500).json({ error: error.message });
   }
 };
 
 // Delete a note
 export const deleteNotes = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { title, description, type } = req.body;
-
-    // Check if the note exists based on all the fields: title, description, and type
-    const existingNote = await Notes.findOne({ title, description, type });
-
-    if (!existingNote) {
-      return res.status(404).json({ error: 'Note not found.' });
+    const note = await Notes.findById(id);
+    if (!note) {
+      res.json({ message: 'Note does not exist!' });
     }
+    await Notes.findByIdAndDelete(id);
 
-    // If the note exists, delete it
-    await existingNote.remove();
-
-    return res.status(200).json({ message: 'Note deleted successfully!', note: existingNote });
+    res.json({ message: 'Deleted task succesfully' });
   } catch (error) {
-    return res.status(500).json({ error: 'Something went wrong!' });
+    console.log(error);
+    res.json({ message: error.message });
   }
 };
