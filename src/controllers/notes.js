@@ -3,11 +3,11 @@ import Notes from '../models/notes.js';
 //Create notes
 export const createNotes = async (req, res) => {
   try {
-    const { title, descriptionription, type } = req.body; // Assuming you're sending title, descriptionription, and type in the request body
-    console.log(title, descriptionription, type)
+    const { title, description, type } = req.body; // Assuming you're sending title, description, and type in the request body
+    console.log(title, description, type)
     // Validate the request data
-    if (!title || !descriptionription || !type) {
-      return res.status(400).json({ error: 'Please provide title, descriptionription, and type for the note.' });
+    if (!title || !description || !type) {
+      return res.status(400).json({ error: 'Please provide title, description, and type for the note.' });
     }
     // Check if a note with the same title already exists
     const existingNote = await Notes.findOne({ title });
@@ -18,7 +18,7 @@ export const createNotes = async (req, res) => {
     // Create a new note using the 'Notes' model
     const newNote = await Notes.create({
       title,
-      descriptionription,
+      description,
       type,
     });
 
@@ -62,6 +62,18 @@ export const getNotes = async (req, res) => {
   }
 };
 
+//Get note by id
+export const getNote = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const note = await Notes.findById(id);
+    if(!note) return res.status(404).json({message: "Note not found!"});
+    res.status(200).json(note);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 //Update api
 export const updateNotes = async (req, res) => {
   try {
@@ -92,11 +104,11 @@ export const deleteNotes = async (req, res) => {
   try {
     const note = await Notes.findById(id);
     if (!note) {
-      res.json({ message: 'Note does not exist!' });
+      res.status(404).json({ message: 'Note does not exist!' });
     }
     await Notes.findByIdAndDelete(id);
 
-    res.json({ message: 'Deleted task succesfully' });
+    res.status(204).json({ message: 'Deleted note succesfully' });
   } catch (error) {
     console.log(error);
     res.json({ message: error.message });
