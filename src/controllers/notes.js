@@ -80,8 +80,9 @@ export const updateNotes = async (req, res) => {
     const { title, description, type } = req.body;
     const {id} = req.params;
     // Check if a note with the same title already exists
-    const existingNote = await Notes.findById(id);
-    if (!existingNote) res.status(404).json({ message: "Note not found!" });
+    const existingNote = await Notes.findById(id)
+    if (!existingNote) return res.status(404).json({ message: "Note not found!" });
+
     // Check if the provided data is the same as the existing note's data
     if (existingNote.title === title && existingNote.description === description && existingNote.type === type) {
       return res.status(200).json({ message: 'No changes made. The existing note is the same.', note: existingNote });
@@ -104,7 +105,7 @@ export const deleteNotes = async (req, res) => {
   try {
     const note = await Notes.findById(id);
     if (!note) {
-      res.status(404).json({ message: 'Note does not exist!' });
+      return res.status(404).json({ message: 'Note does not exist!' });
     }
     await Notes.findByIdAndDelete(id);
 
