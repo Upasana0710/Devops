@@ -114,3 +114,17 @@ export const deleteNotes = async (req, res) => {
     res.json({ message: error.message });
   }
 };
+
+export const ping = async (req, res) => {
+  try {
+    const response = await Notes.findOne();
+    if (response) {
+      res.status(200).json({ message: 'ok' });
+    }
+    else{
+      res.status(500).json({ message: 'Error connecting to database' });
+    }
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+};
