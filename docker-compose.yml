@@ -24,9 +24,9 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf:ro  # Use /etc/nginx/conf.d/ to include your configuration
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf:ro 
     ports:
-      - "8080:80"  # Map container port 80 to host port 8080
+      - "5050:80"
     depends_on:
       - server
 
