@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('c00dc520-524d-4565-b566-f373df6041af')
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
         EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
     }
 
