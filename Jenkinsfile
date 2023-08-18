@@ -12,6 +12,16 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Add your test commands here
+                    sh 'npm install' // Example: Install dependencies
+                    sh 'npm test'     // Example: Run tests
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
