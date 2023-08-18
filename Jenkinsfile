@@ -12,17 +12,18 @@ pipeline {
     }
 
     stage('Checkout') {
-            steps {
-                script {
-                    checkout([$class: 'GitSCM',
-                              branches: [[name: '*/main']],
-                              doGenerateSubmoduleConfigurations: false,
-                              extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: false]],
-                              submoduleCfg: [],
-                              userRemoteConfigs: [[credentialsId: 'git-credentials-id', url: 'https://github.com/Upasana0710/Devops.git']]])
-                }
-            }
+      steps {
+        script {
+          checkout([$class: 'GitSCM',
+          branches: [[name: '*/main']],
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: false]],
+          submoduleCfg: [],
+          userRemoteConfigs: [[credentialsId: 'git-credentials-id', url: 'https://github.com/Upasana0710/Devops.git']]])
         }
+
+      }
+    }
 
     stage('Build Docker Image') {
       steps {
