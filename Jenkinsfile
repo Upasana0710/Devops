@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin/docker"
+        PATH = "/usr/local/bin:$PATH"
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
         EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
     }
@@ -28,10 +28,10 @@ pipeline {
                 script {
                     sshagent(credentials: ['ec2-ssh-credentials-id']) {
                         def remoteCommands = """
-                            docker stop my-app-container || true
-                            docker rm my-app-container || true
-                            docker pull upasana0710/notes-api:${env.BUILD_ID}
-                            docker run -d -p 5000:5000 --name my-app-container upasana0710/notes-api:${env.BUILD_ID}
+                            /usr/local/bin/docker stop my-app-container || true
+                            /usr/local/bin/docker rm my-app-container || true
+                            /usr/local/bin/docker pull upasana0710/notes-api:${env.BUILD_ID}
+                            /usr/local/bin/docker run -d -p 5000:5000 --name my-app-container upasana0710/notes-api:${env.BUILD_ID}
                         """
                         sshCommand remote: "ubuntu@13.235.33.0", command: remoteCommands
                     }
