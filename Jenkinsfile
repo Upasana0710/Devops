@@ -38,6 +38,7 @@ pipeline {
 
   }
   environment {
+    PATH = "/usr/local/bin:$PATH"
     DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials-id'
     EC2_SSH_CREDENTIALS = 'ec2-ssh-credentials-id'
   }
