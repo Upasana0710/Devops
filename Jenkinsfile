@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        def dockerImage = docker.build("upasana0710/notes-api:${env.BUILD_ID}")
+                        def dockerImage = docker.build("jenkins/jenkins:${env.BUILD_ID}")
                         docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
                             dockerImage.push()
                         }
@@ -43,8 +43,8 @@ pipeline {
                             def remoteCommands = """
                                 /usr/local/bin/docker stop my-app-container || true
                                 /usr/local/bin/docker rm my-app-container || true
-                                /usr/local/bin/docker pull upasana0710/notes-api:${env.BUILD_ID}
-                                /usr/local/bin/docker run -d -p 5000:5000 --name my-app-container upasana0710/notes-api:${env.BUILD_ID}
+                                /usr/local/bin/docker pull jenkins/jenkins:${env.BUILD_ID}
+                                /usr/local/bin/docker run -d -p 5000:5000 --name my-app-container jenkins/jenkins:${env.BUILD_ID}
                             """
                             sshCommand remote: "ubuntu@13.235.33.0", command: remoteCommands
                         }
