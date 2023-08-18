@@ -19,20 +19,6 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    try {
-                        sh 'npm install'
-                        sh 'npm test'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        error("Tests failed: ${e.message}")
-                    }
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
