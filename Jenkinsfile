@@ -30,26 +30,15 @@ pipeline {
     }
 
     stage('Deploy to EC2') {
-      steps {
-        script {
-          try {
-            sshagent(credentials: ['ec2-ssh-credentials-id']) {
-              def remoteCommands = """
-              /usr/local/bin/docker stop my-app-container || true
-              /usr/local/bin/docker rm my-app-container || true
-              /usr/local/bin/docker pull jenkins/jenkins:${env.BUILD_ID}
-              /usr/local/bin/docker run -d -p 5000:5000 --name my-app-container jenkins/jenkins:${env.BUILD_ID}
-              """
-              sshCommand remote: "ubuntu@13.235.33.0", command: remoteCommands
+            steps {
+                script {
+                    // Load SSH key
+                    sshagent(credentials: ['ec2-ssh-credentials-id']) {
+                        sh 'ssh -i "node_1.pem" ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com "git pull && yarn && yarn local"'
+                    }
+                }
             }
-          } catch (Exception e) {
-            currentBuild.result = 'FAILURE'
-            error("Deployment failed: ${e.message}")
-          }
         }
-
-      }
-    }
 
   }
   environment {
