@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        def dockerImage = docker.build("jenkins/jenkins")
+                        def dockerImage = docker.build("jenkins/jenkins:lts")
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         error("Docker build failed: ${e.message}")
