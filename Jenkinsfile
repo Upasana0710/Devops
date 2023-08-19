@@ -1,15 +1,15 @@
 pipeline {
   agent any
   stages {
-    stage('Install Docker') {
-      steps {
-        script {
-          sh 'curl -fsSL https://get.docker.com | sh'
-          sh 'sudo usermod -aG docker jenkins'  // Add the Jenkins user to the docker group (optional)
-        }
+    // stage('Install Docker') {
+    //   steps {
+    //     script {
+    //       sh 'curl -fsSL https://get.docker.com | sh'
+    //       sh 'sudo usermod -aG docker jenkins'  // Add the Jenkins user to the docker group (optional)
+    //     }
 
-      }
-    }
+    //   }
+    // }
 
     stage('Checkout') {
       steps {
