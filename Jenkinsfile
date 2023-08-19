@@ -30,15 +30,15 @@ pipeline {
     }
 
     stage('Deploy to EC2') {
-            steps {
-                script {
-                    // Load SSH key
-                    sshagent(credentials: ['ec2-ssh-credentials-id']) {
-                        sh 'ssh -i "node_1.pem" ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com "git pull && yarn && yarn local"'
-                    }
-                }
-            }
+      steps {
+        script {
+          sshagent(credentials: ['ec2-ssh-credentials-id']) {
+            sh 'ssh -i "node_1.pem" ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com "git pull && yarn && yarn local"'
+          }
         }
+
+      }
+    }
 
   }
   environment {
