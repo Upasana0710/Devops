@@ -16,17 +16,18 @@ pipeline {
     }
 
     stage('Build Docker Image') {
-            steps {
-                script {
-                    try {
-                        def dockerImage = docker.build("jenkins/jenkins:lts")
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        error("Docker build failed: ${e.message}")
-                    }
-                } 
-            }
+      steps {
+        script {
+          try {
+            def dockerImage = docker.build("jenkins/jenkins:lts")
+          } catch (Exception e) {
+            currentBuild.result = 'FAILURE'
+            error("Docker build failed: ${e.message}")
+          }
         }
+
+      }
+    }
 
     stage('Deploy to EC2') {
       steps {
