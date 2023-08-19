@@ -16,22 +16,23 @@ pipeline {
     }
 
     stage('Build Docker Image') {
-            steps {
-                script {
-                    try {
-                        def imageName = "jenkins/jenkins:${env.BUILD_ID}"
-                        def dockerImage = docker.image(imageName)
-                        dockerImage.build()
-                        dockerImage.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
-                            dockerImage.push()
-                        }
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        error("Docker build failed: " + e.getMessage())
-                    }
-                }
+      steps {
+        script {
+          try {
+            def imageName = "jenkins/jenkins:${env.BUILD_ID}"
+            def dockerImage = docker.image(imageName)
+            dockerImage.build()
+            dockerImage.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
+              dockerImage.push()
             }
+          } catch (Exception e) {
+            currentBuild.result = 'FAILURE'
+            error("Docker build failed: " + e.getMessage())
+          }
         }
+
+      }
+    }
 
     stage('Deploy to EC2') {
       steps {
