@@ -24,7 +24,7 @@ pipeline {
                         currentBuild.result = 'FAILURE'
                         error("Docker build failed: ${e.message}")
                     }
-                }
+                } 
             }
         }
 
