@@ -30,14 +30,16 @@ pipeline {
     }
 
     stage('Deploy to EC2') {
-            steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
-                        sh 'ssh -i $PRIVATE_KEY_CREDENTIALS ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com "git pull && yarn && yarn local"'
-                    }
-                }
-            }
+      steps {
+        script {
+          withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
+            sh 'ssh -i $PRIVATE_KEY_CREDENTIALS ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com "git pull && yarn && yarn local"'
+          }
         }
+
+      }
+    }
+
   }
   environment {
     PATH = "/usr/local/bin:$PATH"
