@@ -1,4 +1,11 @@
 pipeline {
+  environment {
+    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
+    DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
+    EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
+    PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
+    dockerhubId = 'docker-hub-credentials-id'
+  }
   agent any
   stages {
     stage('Checkout') {
@@ -34,45 +41,31 @@ pipeline {
       steps {
         script {
           def dockerImageName = 'upasana0710/notes-api'
-
-          //   withDockerRegistry([ credentialsId: "dockerhubaccount", url: "" ]) {
-
-            //     sh "docker tag notes-api:latest ${dockerImageName}:latest"
-            //     sh "docker push ${dockerImageName}:latest"
-            // }
-            docker.withRegistry('',dockerhubId) {
-              sh "docker tag notes-api:latest ${dockerImageName}:latest"
-              sh "docker push ${dockerImageName}:latest"
-            }
-          }
-
+        docker.withRegistry('',dockerhubId) {
+            sh "docker tag notes-api:latest ${dockerImageName}:latest"
+            sh "docker push ${dockerImageName}:latest"
         }
-      }
-
-      stage('Deploy to EC2') {
-        steps {
-          script {
-            withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
-              sh """
-              ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '
-              docker stop nice_lumiere || true
-              docker rm nice_lumiere || true
-              docker pull ${custom-jenkins-docker}:${env.BUILD_NUMBER}
-              docker run -d --name nice_lumiere -p 80:80 ${custom-jenkins-docker}:${env.BUILD_NUMBER}
-              '
-              """
-            }
-          }
-
         }
-      }
 
+      }
     }
-    environment {
-      PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
-      DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
-      EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
-      PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
-      dockerhubId = 'docker-hub-credentials-id'
+
+    stage('Deploy to EC2') {
+      steps {
+        script {
+          withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
+            sh """
+            ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '
+            cd Devops
+            docker-compose down
+            docker-compose up --build -d
+            '
+            """
+          }
+        }
+
+      }
     }
+
   }
+}
