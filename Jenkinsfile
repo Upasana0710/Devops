@@ -33,11 +33,11 @@ pipeline {
       steps {
         script {
           def dockerHubCredentials = credentials('docker-hub-credentials-id')
-          def dockerImageName = 'upasana0710/notes'
+          def dockerImageName = 'upasana0710/custom-jenkins-docker'
 
           docker.withRegistry("https://index.docker.io/v1/", dockerHubCredentials) {
-            sh "docker tag jenkins/jenkins:lts ${notes}:${env.BUILD_NUMBER}"
-            sh "docker push ${notes}:${env.BUILD_NUMBER}"
+            sh "docker tag jenkins/jenkins:lts ${custom-jenkins-docker}:${env.BUILD_NUMBER}"
+            sh "docker push ${custom-jenkins-docker}:${env.BUILD_NUMBER}"
           }
         }
 
@@ -50,10 +50,10 @@ pipeline {
           withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
             sh """
             ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '
-            docker stop notes-container || true
-            docker rm notes-container || true
-            docker pull ${notes}:${env.BUILD_NUMBER}
-            docker run -d --name notes-container -p 80:80 ${notes}:${env.BUILD_NUMBER}
+            docker stop nice_lumiere || true
+            docker rm nice_lumiere || true
+            docker pull ${custom-jenkins-docker}:${env.BUILD_NUMBER}
+            docker run -d --name nice_lumiere -p 80:80 ${custom-jenkins-docker}:${env.BUILD_NUMBER}
             '
             """
           }
