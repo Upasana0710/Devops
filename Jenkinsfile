@@ -30,15 +30,21 @@ pipeline {
     }
 
     stage('Deploy to EC2') {
-      steps {
+    steps {
         script {
-          withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
-            sh 'ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com "git pull && yarn && yarn local"'
-          }
+            withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
+                def sshCommand = """
+                    cd Devops
+                    git pull
+                    yarn
+                    yarn local
+                """
+                sh "ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '${sshCommand}'"
+            }
         }
-
-      }
     }
+}
+
 
   }
   environment {
