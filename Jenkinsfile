@@ -57,6 +57,7 @@ pipeline {
             sh """
             ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '
             cd Devops
+            git pull
             docker-compose up --build -d
             '
             """
