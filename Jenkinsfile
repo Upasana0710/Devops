@@ -35,6 +35,7 @@ pipeline {
           withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
             def sshCommand = """
             cd Devops
+            /usr/bin/node /usr/bin/yarn local
             git pull
             yarn
             yarn local
