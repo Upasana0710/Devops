@@ -30,25 +30,25 @@ pipeline {
     }
 
     stage('Deploy to EC2') {
-      steps {
+    steps {
         script {
-          withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
-            def sshCommand = """
-            cd Devops
-            git pull
-            yarn
-            yarn local
-            """
-            sh "ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '${sshCommand}'"
-          }
+            withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
+                def sshCommand = """
+                    cd Devops
+                    git pull
+                    yarn
+                    yarn local
+                """
+                sh "ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '${sshCommand}'"
+            }
         }
-
-      }
     }
+}
+
 
   }
   environment {
-    PATH = "/usr/local/bin:$PATH"
+    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
     DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
     EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
     PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
