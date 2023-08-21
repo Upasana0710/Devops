@@ -19,7 +19,8 @@ pipeline {
       steps {
         script {
           try {
-            def dockerImage = docker.build("jenkins/jenkins:lts")
+            def dockerImageName = 'notes-api'
+            sh "docker build -t ${dockerImageName}:latest ."
           } catch (Exception e) {
             currentBuild.result = 'FAILURE'
             error("Docker build failed: ${e.message}")
@@ -33,11 +34,11 @@ pipeline {
       steps {
         script {
           def dockerHubCredentials = credentials('docker-hub-credentials-id')
-          def dockerImageName = 'upasana0710/custom-jenkins-docker'
+          def dockerImageName = 'upasana0710/notes-api'
 
           docker.withRegistry("https://index.docker.io/v1/", dockerHubCredentials) {
-            sh "docker tag jenkins/jenkins:lts ${custom-jenkins-docker}:${env.BUILD_NUMBER}"
-            sh "docker push ${custom-jenkins-docker}:${env.BUILD_NUMBER}"
+            sh "docker tag notes-api:latest ${dockerImageName}:latest"
+            sh "docker push ${dockerImageName}:latest"
           }
         }
 
