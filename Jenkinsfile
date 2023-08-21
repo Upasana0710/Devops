@@ -1,5 +1,5 @@
 pipeline {
-  enviornment {
+  environment {
     dockerhubId = 'docker-hub-credentials-id'
   }
   agent any
