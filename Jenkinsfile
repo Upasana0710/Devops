@@ -1,4 +1,7 @@
 pipeline {
+  enviornment {
+    dockerhubId = 'docker-hub-credentials-id'
+  }
   agent any
   stages {
     stage('Checkout') {
@@ -33,12 +36,18 @@ pipeline {
     stage('Push to Docker Hub') {
       steps {
         script {
-          def DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials-id')
+          // def DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials-id')
           def dockerImageName = 'upasana0710/notes-api'
 
-            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+        //   withDockerRegistry([ credentialsId: "dockerhubaccount", url: "" ]) {
+
+        //     sh "docker tag notes-api:latest ${dockerImageName}:latest"
+        //     sh "docker push ${dockerImageName}:latest"
+        // }
+        docker.withRegistry('',dockerhubId) {
             sh "docker tag notes-api:latest ${dockerImageName}:latest"
             sh "docker push ${dockerImageName}:latest"
+        }
           // withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: dockerHubCredentials, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
           //   sh "docker login -u $USERNAME -p $PASSWORD"
           //   sh "docker tag notes-api:latest ${dockerImageName}:latest"
