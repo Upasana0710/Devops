@@ -1,5 +1,9 @@
 pipeline {
   environment {
+    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
+    DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
+    EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
+    PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
     dockerhubId = 'docker-hub-credentials-id'
   }
   agent any
@@ -76,11 +80,5 @@ pipeline {
       }
     }
 
-  }
-  environment {
-    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
-    DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
-    EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
-    PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
   }
 }
