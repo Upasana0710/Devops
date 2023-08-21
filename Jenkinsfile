@@ -36,17 +36,11 @@ pipeline {
           def dockerHubCredentials = credentials('docker-hub-credentials-id')
           def dockerImageName = 'upasana0710/notes-api'
 
-           withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: dockerHubCredentials, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+          withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: dockerHubCredentials, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
             sh "docker login -u $USERNAME -p $PASSWORD"
             sh "docker tag notes-api:latest ${dockerImageName}:latest"
             sh "docker push ${dockerImageName}:latest"
-           }
-
-          // docker.withRegistry("https://index.docker.io/v1/", dockerHubCredentials) {
-          //   sh "docker tag notes-api:latest ${dockerImageName}:latest"
-          //   sh "docker push ${dockerImageName}:latest"
-          // }
-          
+          }
         }
 
       }
