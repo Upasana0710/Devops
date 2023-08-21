@@ -29,23 +29,36 @@ pipeline {
       }
     }
 
-    stage('Deploy to EC2') {
-      steps {
-        script {
-          withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
-            sh """
-            ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '
-            cd Devops
-            git pull
-            yarn
-            yarn local
-            '
-            """
-          }
+    stage('Push to Docker Hub') {
+            steps {
+                script {
+                    def dockerHubCredentials = credentials('docker-hub-credentials-id')
+                    def dockerImageName = 'upasana0710/notes'
+
+                    docker.withRegistry("https://index.docker.io/v1/", dockerHubCredentials) {
+                        sh "docker tag jenkins/jenkins:lts ${notes}:${env.BUILD_NUMBER}"
+                        sh "docker push ${notes}:${env.BUILD_NUMBER}"
+                    }
+                }
+            }
         }
 
-      }
-    }
+    stage('Deploy to EC2') {
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'node_1_private_key', keyFileVariable: 'PRIVATE_KEY_CREDENTIALS')]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=yes -i /var/jenkins_home/node_1.pem ubuntu@ec2-13-235-33-0.ap-south-1.compute.amazonaws.com '
+                        docker stop notes-container || true
+                        docker rm notes-container || true
+                        docker pull ${notes}:${env.BUILD_NUMBER}
+                        docker run -d --name notes-container -p 80:80 ${notes}:${env.BUILD_NUMBER}
+                        '
+                        """
+                    }
+                }
+            }
+        }
 
   }
   environment {
