@@ -33,14 +33,17 @@ pipeline {
     stage('Push to Docker Hub') {
       steps {
         script {
-          def dockerHubCredentials = credentials('docker-hub-credentials-id')
+          def DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials-id')
           def dockerImageName = 'upasana0710/notes-api'
 
-          withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: dockerHubCredentials, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-            sh "docker login -u $USERNAME -p $PASSWORD"
+            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             sh "docker tag notes-api:latest ${dockerImageName}:latest"
             sh "docker push ${dockerImageName}:latest"
-          }
+          // withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: dockerHubCredentials, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+          //   sh "docker login -u $USERNAME -p $PASSWORD"
+          //   sh "docker tag notes-api:latest ${dockerImageName}:latest"
+          //   sh "docker push ${dockerImageName}:latest"
+          // }
         }
 
       }
