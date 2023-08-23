@@ -20,7 +20,7 @@ pipeline {
         script {
           try {
             def dockerImageName = 'notes-api'
-            sh "docker build -t ${dockerImageName}:latest ."
+            sh "docker build -t ${dockerImageName} ."
           } catch (Exception e) {
             currentBuild.result = 'FAILURE'
             error("Docker build failed: ${e.message}")
@@ -35,8 +35,8 @@ pipeline {
         script {
           def dockerImageName = 'upasana0710/notes-api'
           docker.withRegistry('',dockerhubId) {
-            sh "docker tag notes-api:latest ${dockerImageName}:latest"
-            sh "docker push ${dockerImageName}:latest"
+            sh "docker tag notes-api ${dockerImageName}"
+            sh "docker push ${dockerImageName}"
           }
         }
 
