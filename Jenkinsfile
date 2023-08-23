@@ -1,11 +1,4 @@
 pipeline {
-  environment {
-    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
-    DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
-    EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
-    PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
-    dockerhubId = 'docker-hub-credentials-id'
-  }
   agent any
   stages {
     stage('Checkout') {
@@ -41,10 +34,10 @@ pipeline {
       steps {
         script {
           def dockerImageName = 'upasana0710/notes-api'
-        docker.withRegistry('',dockerhubId) {
+          docker.withRegistry('',dockerhubId) {
             sh "docker tag notes-api:latest ${dockerImageName}:latest"
             sh "docker push ${dockerImageName}:latest"
-        }
+          }
         }
 
       }
@@ -67,5 +60,12 @@ pipeline {
       }
     }
 
+  }
+  environment {
+    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/bin/yarn:$PATH"
+    DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id')
+    EC2_SSH_CREDENTIALS = credentials('ec2-ssh-credentials-id')
+    PRIVATE_KEY_CREDENTIALS = credentials('node_1_private_key')
+    dockerhubId = 'docker-hub-credentials-id'
   }
 }
